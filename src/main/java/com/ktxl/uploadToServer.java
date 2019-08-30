@@ -4,15 +4,12 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
-import org.springframework.context.annotation.PropertySource;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 
-@PropertySource("classpath:application.properties")
 public class uploadToServer {
     private static Logger log = Logger.getLogger(uploadToServer.class);
 
