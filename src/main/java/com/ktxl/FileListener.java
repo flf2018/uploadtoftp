@@ -1,42 +1,36 @@
 package com.ktxl;
 
+import com.ktxl.util.FtpConfig;
+import com.ktxl.util.SpringUtil;
+import org.apache.commons.io.filefilter.FileFilterUtils;
+import org.apache.commons.io.filefilter.HiddenFileFilter;
+import org.apache.commons.io.filefilter.IOFileFilter;
 import org.apache.commons.io.monitor.FileAlterationListenerAdaptor;
+import org.apache.commons.io.monitor.FileAlterationMonitor;
 import org.apache.commons.io.monitor.FileAlterationObserver;
 import org.apache.log4j.Logger;
-import org.springframework.stereotype.Component;
 
 import java.io.*;
-import java.util.Map;
-import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
-@Component
+
 public class FileListener extends FileAlterationListenerAdaptor  {
     private Logger log = Logger.getLogger(FileListener.class);
-
-    public static Properties getExpProperties(){
-        InputStream inputStream = FileListener.class.getClassLoader().getResourceAsStream("application.properties");
-        Properties p = new Properties();
-        try {
-            p.load(inputStream);
-            inputStream.close();
-        } catch (IOException e) {
-            //读取配置文件出错
-            e.printStackTrace();
-        }
-        return trimSpace(p);
+    private static FtpConfig ftpConfig;
+    static {
+        ftpConfig=(FtpConfig)SpringUtil.getBean("ftpConfig",FtpConfig.class);
     }
     /**
      * 文件创建执行
      */
     public void onFileCreate(File file) {
-        Properties pro =  getExpProperties();
         log.info("[新建]:" + file.getAbsolutePath());
         try {
             FileInputStream in=new FileInputStream(file);
-            String url = pro.getProperty("ftp.url");
-            String username = pro.getProperty("ftp.username");
-            String password = pro.getProperty("ftp.password");
-            int port = Integer.parseInt(pro.getProperty("ftp.port"));
+            String url = ftpConfig.getUrl();
+            String username = ftpConfig.getUsername();
+            String password =ftpConfig.getPassword();
+            int port = ftpConfig.getPort();
             String  path=file.getAbsolutePath();
             String[] paths=path.split("\\\\");
             String  basepath="/";
@@ -106,13 +100,37 @@ public class FileListener extends FileAlterationListenerAdaptor  {
         // TODO Auto-generated method stub
         super.onStop(observer);
     }
+
+
     /**
-     * * 读取properties文件的值中会可能会有空格，需要处理一下。*/
-    public static Properties trimSpace(Properties prop) {
-        for (Map.Entry<Object, Object> entry : prop.entrySet()) {
-            entry.setValue(entry.getValue().toString().trim());
+     * 文件监听
+     * @param rootDir
+     */
+    public static void listenerExp(String rootDir){
+        // 轮询间隔 1 秒
+        long interval = TimeUnit.SECONDS.toMillis(1);
+        // 创建过滤器
+        try {
+            IOFileFilter directories = FileFilterUtils.and(
+                    FileFilterUtils.directoryFileFilter(),
+                    HiddenFileFilter.VISIBLE);
+            IOFileFilter files  = FileFilterUtils.and(
+                    FileFilterUtils.fileFileFilter(),
+                    FileFilterUtils.suffixFileFilter(".EXP"));
+            IOFileFilter filter = FileFilterUtils.or(directories, files);
+            // 使用过滤器
+            FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir), filter);
+            //不使用过滤器
+            //FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir));
+            observer.addListener(new FileListener());
+            //创建文件变化监听器
+            FileAlterationMonitor monitor = new FileAlterationMonitor(interval, observer);
+            // 开始监控
+            monitor.start();
+            //monitor.stop();
+        }catch (Exception e ){
+            e.printStackTrace();
         }
-        return prop;
     }
 }
 
