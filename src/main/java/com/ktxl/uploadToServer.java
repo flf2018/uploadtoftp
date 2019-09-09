@@ -4,40 +4,12 @@ import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPReply;
 import org.apache.log4j.Logger;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.SocketException;
 
 public class uploadToServer {
     private static Logger log = Logger.getLogger(uploadToServer.class);
-
-    public static void main(String[] args) {
-       /* getFTPClient("172.20.10.3",21,
-                "root","root"); //此处用户为ftp  server端创建*/
-
-        String url = "172.20.10.3";
-        String username = "root";
-        String password = "root";
-        int port = 21;
-        String ftpPath = "/temp";
-        String fileName = "54.EXP";
-       String  basepath="/";
-       String  filepath="tem";
-        //上传一个文件
-        try{
-            String tmpPath = System.getProperty("java.io.tmpdir");
-            FileInputStream in=new FileInputStream(new File("D:\\tem\\" + fileName));
-            uploadToServer.uploadFile(url,port,username,password, basepath,filepath,fileName, in);
-            System.out.println(tmpPath);
-        } catch (Exception e){
-            e.printStackTrace();
-            System.out.println(e);
-        }
-    }
-
-
 
     public static FTPClient getFTPClient(String url, int port, String username, String password) {
         FTPClient ftpClient = new FTPClient();
@@ -120,6 +92,9 @@ public class uploadToServer {
             input.close();
             ftp.logout();
             result = true;
+            if (result=true){
+                log.info("成功上传："+filename);
+            }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
@@ -132,6 +107,5 @@ public class uploadToServer {
         }
         return result;
     }
-
 
 }

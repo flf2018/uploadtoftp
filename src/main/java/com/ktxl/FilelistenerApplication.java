@@ -20,29 +20,35 @@ public class FilelistenerApplication {
         System.out.println("*********************************启动成功*********************************");
         // 监控目录
         Properties pro = FileListener.getExpProperties();
-        String rootDir = pro.getProperty("ftp.localfile");
-        // 轮询间隔 5 秒
-        long interval = TimeUnit.SECONDS.toMillis(1);
-        // 创建过滤器
-        IOFileFilter directories = FileFilterUtils.and(
-                FileFilterUtils.directoryFileFilter(),
-                HiddenFileFilter.VISIBLE);
-        IOFileFilter files  = FileFilterUtils.and(
-                FileFilterUtils.fileFileFilter(),
-                FileFilterUtils.suffixFileFilter(".EXP"));
-        IOFileFilter filter = FileFilterUtils.or(directories, files);
-        // 使用过滤器
-        FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir), filter);
-        //FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir));
-        observer.addListener(new FileListener());
-        //创建文件变化监听器
-        FileAlterationMonitor monitor = new FileAlterationMonitor(interval, observer);
-        // 开始监控
-        try{
-            monitor.start();
-        }
-        catch (Exception e){
-            log.error("异常处理",e);
+        String rootDir1 = pro.getProperty("ftp.localfile");
+        String rootDir2 = pro.getProperty("ftp.localfile1");
+        String[] arrfile=new String[2];
+        arrfile[0]=rootDir1;
+        arrfile[1]=rootDir2;
+        for (int i=0;i<arrfile.length;i++) {
+            // 轮询间隔 5 秒
+            String rootDir=arrfile[i];
+            long interval = TimeUnit.SECONDS.toMillis(1);
+            // 创建过滤器
+            IOFileFilter directories = FileFilterUtils.and(
+                    FileFilterUtils.directoryFileFilter(),
+                    HiddenFileFilter.VISIBLE);
+            IOFileFilter files = FileFilterUtils.and(
+                    FileFilterUtils.fileFileFilter(),
+                    FileFilterUtils.suffixFileFilter(".EXP"));
+            IOFileFilter filter = FileFilterUtils.or(directories, files);
+            // 使用过滤器
+            FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir), filter);
+            //FileAlterationObserver observer = new FileAlterationObserver(new File(rootDir));
+            observer.addListener(new FileListener());
+            //创建文件变化监听器
+            FileAlterationMonitor monitor = new FileAlterationMonitor(interval, observer);
+            // 开始监控
+            try {
+                monitor.start();
+            } catch (Exception e) {
+                log.error("异常处理", e);
+            }
         }
     }
 }
