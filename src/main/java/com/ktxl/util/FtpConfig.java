@@ -60,4 +60,6 @@ public class FtpConfig {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

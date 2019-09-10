@@ -73,17 +73,27 @@
                     <include>**/*.*</include>
                 </includes>
             </resource>
+            <!--打包时排除 application.properties -->
             <resource>
                 <directory>src/main/resources</directory>
-                <includes>
-                    <include>**/*.*</include>
-                </includes>
+                <excludes>
+                    <exclude>**/*.properties</exclude>
+                </excludes>
+                <filtering>false</filtering>
             </resource>
         </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <skipTests>true</skipTests>
+                </configuration>
             </plugin>
         </plugins>
     </build>

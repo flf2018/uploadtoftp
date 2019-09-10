@@ -12,6 +12,13 @@ public class FilelistenerApplication {
         ApplicationContext cxt= SpringApplication.run(FilelistenerApplication.class, args);
         FtpConfig ftpConfig= (FtpConfig) cxt.getBean("ftpConfig");
         System.out.println("*********************************启动成功*********************************");
+        System.out.println("url："+ftpConfig.getUrl());
+        System.out.println("port："+ftpConfig.getPort());
+        System.out.println("name："+ftpConfig.getUsername());
+        System.out.println("目录一："+ftpConfig.getLocalfile());
+        System.out.println("目录二："+ftpConfig.getLocalfile1());
+        System.out.println("pwd："+ftpConfig.getPassword());
+        System.out.println("*********************************配置信息*********************************");
         // 监控目录
         String rootDir1 =ftpConfig.getLocalfile();
         String rootDir2 = ftpConfig.getLocalfile1();
@@ -22,6 +29,7 @@ public class FilelistenerApplication {
             // 轮询间隔 5 秒
             String rootDir=arrfile[i];
             FileListener.listenerExp(rootDir);
+
         }
     }
 }
