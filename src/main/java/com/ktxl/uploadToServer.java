@@ -11,6 +11,8 @@ import java.net.SocketException;
 public class uploadToServer {
     private static Logger log = Logger.getLogger(uploadToServer.class);
 
+
+
     public static FTPClient getFTPClient(String url, int port, String username, String password) {
         FTPClient ftpClient = new FTPClient();
         try {
@@ -58,6 +60,8 @@ public class uploadToServer {
             // 如果采用默认端口，可以使用ftp.connect(host)的方式直接连接FTP服务器
             ftp.enterLocalPassiveMode();
             ftp.login(username, password);// 登录
+            ftp.setControlEncoding("UTF-8");    // 中文支持
+            ftp.setFileType(FTPClient.BINARY_FILE_TYPE);
             reply = ftp.getReplyCode();
             if (!FTPReply.isPositiveCompletion(reply)) {
                 log.info("未连接到FTP，用户名或密码错误!");
@@ -74,11 +78,12 @@ public class uploadToServer {
                 for (String dir : dirs) {
                     if (null == dir || "".equals(dir)) continue;
                     tempPath += "/" + dir;
-                    if (!ftp.changeWorkingDirectory(tempPath)) {
-                        if (!ftp.makeDirectory(tempPath)) {
+                    String S=new String(tempPath.getBytes("GBK"),"iso-8859-1");
+                    if (!ftp.changeWorkingDirectory(S)) {
+                        if (!ftp.makeDirectory(S)) {
                             return result;
                         } else {
-                            ftp.changeWorkingDirectory(tempPath);
+                            ftp.changeWorkingDirectory(S);
                         }
                     }
                 }
@@ -107,5 +112,4 @@ public class uploadToServer {
         }
         return result;
     }
-
 }

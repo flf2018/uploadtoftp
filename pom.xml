@@ -74,13 +74,13 @@
                 </includes>
             </resource>
             <!--打包时排除 application.properties -->
-            <resource>
+          <!--  <resource>
                 <directory>src/main/resources</directory>
                 <excludes>
                     <exclude>**/*.properties</exclude>
                 </excludes>
                 <filtering>false</filtering>
-            </resource>
+            </resource>-->
         </resources>
         <plugins>
             <plugin>

@@ -32,9 +32,13 @@ public class FileListener extends FileAlterationListenerAdaptor  {
             String password =ftpConfig.getPassword();
             int port = ftpConfig.getPort();
             String  path=file.getAbsolutePath();
-            String[] paths=path.split("\\\\");
             String  basepath="/";
-            String filepath = paths[paths.length-2]; //取文件上一级目录
+            String[] paths=path.split("\\\\");
+           // String filepath = paths[paths.length-2]; //取文件上一级目录
+            String filepath="";
+            for (int i=1;i<paths.length-1;i++){
+                filepath=filepath+paths[i]+"/";
+            }
             String fileName=file.getName();
             uploadToServer.uploadFile(url,port,username,password, basepath,filepath,fileName, in);
         } catch (FileNotFoundException e) {
